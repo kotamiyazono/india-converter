@@ -458,7 +458,10 @@ const areaConversions = {
 };
 
 function convertArea(sourceId, value) {
-    if (value === '' || isNaN(value)) {
+    // カンマを削除して数値を取得
+    const cleanValue = typeof value === 'string' ? value.replace(/,/g, '') : value;
+    
+    if (cleanValue === '' || isNaN(cleanValue)) {
         // 空欄の場合は全てクリア
         Object.values(areaInputs).forEach(input => {
             if (input.id !== sourceId) input.value = '';
@@ -466,7 +469,7 @@ function convertArea(sourceId, value) {
         return;
     }
 
-    const val = parseFloat(value);
+    const val = parseFloat(cleanValue);
     
     const unitNames = {
         acre: 'エーカー',
@@ -486,17 +489,8 @@ function convertArea(sourceId, value) {
         if (id !== sourceId) {
             const converted = sqmValue * areaConversions[id];
             
-            let displayValue;
-            // 適切な桁数で表示
-            if (converted < 0.0001) {
-                displayValue = converted.toExponential(4);
-            } else if (converted < 1) {
-                displayValue = converted.toFixed(6);
-            } else if (converted < 100) {
-                displayValue = converted.toFixed(4);
-            } else {
-                displayValue = converted.toFixed(2);
-            }
+            // カンマ区切り、小数点1桁で表示
+            const displayValue = formatWithCommas(converted, 1);
             
             input.value = displayValue;
             
@@ -523,8 +517,49 @@ function convertArea(sourceId, value) {
 
 // 面積入力イベント
 Object.entries(areaInputs).forEach(([id, input]) => {
+    // カンマ区切り、小数点1桁
     input.addEventListener('input', (e) => {
-        convertArea(id, e.target.value);
+        // カンマを削除
+        let value = e.target.value.replace(/,/g, '');
+        
+        // 数値と小数点のみを許可
+        value = value.replace(/[^\d.]/g, '');
+        
+        // 小数点が複数ある場合は最初の1つだけ残す
+        const parts = value.split('.');
+        if (parts.length > 2) {
+            value = parts[0] + '.' + parts.slice(1).join('');
+        }
+        
+        // カーソル位置を保存
+        const cursorPos = e.target.selectionStart;
+        const oldLength = e.target.value.length;
+        
+        e.target.value = value;
+        
+        // カーソル位置を復元
+        const newLength = value.length;
+        const diff = newLength - oldLength;
+        e.target.setSelectionRange(cursorPos + diff, cursorPos + diff);
+        
+        // 変換実行
+        convertArea(id, value);
+    });
+    
+    input.addEventListener('focus', (e) => {
+        // フォーカス時はカンマを削除して編集しやすくする
+        const value = e.target.value.replace(/,/g, '');
+        if (value) {
+            e.target.value = value;
+        }
+    });
+    
+    input.addEventListener('blur', (e) => {
+        // フォーカスが外れたときに桁区切りを追加（小数点1桁）
+        const value = e.target.value.replace(/,/g, '');
+        if (value && !isNaN(value) && value !== '') {
+            e.target.value = formatWithCommas(value, 1);
+        }
     });
 });
 
