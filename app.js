@@ -271,8 +271,8 @@ function convertCurrency(sourceId, value) {
             // 円からルピーへ
             const inr = val * exchangeRate;
             currencyInputs.inr.value = formatWithCommas(inr, 0);
-            currencyInputs.lakh.value = (inr / 100000).toFixed(4);
-            currencyInputs.crore.value = (inr / 10000000).toFixed(6);
+            currencyInputs.lakh.value = formatWithCommas(inr / 100000, 4);
+            currencyInputs.crore.value = formatWithCommas(inr / 10000000, 6);
             toUnit = 'インドルピー';
             toValue = formatWithCommas(inr, 0);
             break;
@@ -281,8 +281,8 @@ function convertCurrency(sourceId, value) {
             // ルピーから他の単位へ
             const jpy = val / exchangeRate;
             currencyInputs.jpy.value = formatWithCommas(jpy, 0);
-            currencyInputs.lakh.value = (val / 100000).toFixed(4);
-            currencyInputs.crore.value = (val / 10000000).toFixed(6);
+            currencyInputs.lakh.value = formatWithCommas(val / 100000, 4);
+            currencyInputs.crore.value = formatWithCommas(val / 10000000, 6);
             toUnit = '日本円';
             toValue = formatWithCommas(jpy, 0);
             break;
@@ -292,7 +292,7 @@ function convertCurrency(sourceId, value) {
             const inrFromLakh = val * 100000;
             currencyInputs.inr.value = formatWithCommas(inrFromLakh, 0);
             currencyInputs.jpy.value = formatWithCommas(inrFromLakh / exchangeRate, 0);
-            currencyInputs.crore.value = (val / 100).toFixed(6);
+            currencyInputs.crore.value = formatWithCommas(val / 100, 6);
             toUnit = 'インドルピー';
             toValue = formatWithCommas(inrFromLakh, 0);
             break;
@@ -302,7 +302,7 @@ function convertCurrency(sourceId, value) {
             const inrFromCrore = val * 10000000;
             currencyInputs.inr.value = formatWithCommas(inrFromCrore, 0);
             currencyInputs.jpy.value = formatWithCommas(inrFromCrore / exchangeRate, 0);
-            currencyInputs.lakh.value = (val * 100).toFixed(4);
+            currencyInputs.lakh.value = formatWithCommas(val * 100, 4);
             toUnit = 'インドルピー';
             toValue = formatWithCommas(inrFromCrore, 0);
             break;
@@ -318,7 +318,7 @@ function convertCurrency(sourceId, value) {
 Object.entries(currencyInputs).forEach(([id, input]) => {
     // 日本円とルピーの入力フィールドにフォーカス時のイベント
     if (id === 'jpy' || id === 'inr') {
-        // 入力中の処理
+        // 日本円とインドルピー：カンマ区切り、小数点なし
         input.addEventListener('input', (e) => {
             // カンマを削除
             let value = e.target.value.replace(/,/g, '');
@@ -362,10 +362,51 @@ Object.entries(currencyInputs).forEach(([id, input]) => {
                 e.target.value = formatWithCommas(value, 0);
             }
         });
-    } else {
-        // ラックとクロールは通常の入力処理
+    } else if (id === 'lakh' || id === 'crore') {
+        // ラックとクロール：カンマ区切り、小数点あり
         input.addEventListener('input', (e) => {
-            convertCurrency(id, e.target.value);
+            // カンマを削除
+            let value = e.target.value.replace(/,/g, '');
+            
+            // 数値と小数点のみを許可
+            value = value.replace(/[^\d.]/g, '');
+            
+            // 小数点が複数ある場合は最初の1つだけ残す
+            const parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+            
+            // カーソル位置を保存
+            const cursorPos = e.target.selectionStart;
+            const oldLength = e.target.value.length;
+            
+            e.target.value = value;
+            
+            // カーソル位置を復元
+            const newLength = value.length;
+            const diff = newLength - oldLength;
+            e.target.setSelectionRange(cursorPos + diff, cursorPos + diff);
+            
+            // 変換実行
+            convertCurrency(id, value);
+        });
+        
+        input.addEventListener('focus', (e) => {
+            // フォーカス時はカンマを削除して編集しやすくする
+            const value = e.target.value.replace(/,/g, '');
+            if (value) {
+                e.target.value = value;
+            }
+        });
+        
+        input.addEventListener('blur', (e) => {
+            // フォーカスが外れたときに桁区切りを追加（小数点あり）
+            const value = e.target.value.replace(/,/g, '');
+            if (value && !isNaN(value) && value !== '') {
+                const decimals = id === 'lakh' ? 4 : 6;
+                e.target.value = formatWithCommas(value, decimals);
+            }
         });
     }
 });
