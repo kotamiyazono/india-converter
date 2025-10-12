@@ -134,9 +134,13 @@ h1 {
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
-/* 日本円とインドルピーは右寄せ */
-#jpy, #inr {
+/* 全ての数字フィールドを右寄せ */
+.input-group input {
     text-align: right;
+}
+
+/* 日本円とインドルピーは太字 */
+#jpy, #inr {
     font-weight: 600;
 }
 
