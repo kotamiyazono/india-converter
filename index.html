@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="description" content="インド単位変換アプリ - 通貨と面積の変換">
+    <title>インド単位変換</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="icon-192.svg">
+    <link rel="apple-touch-icon" href="icon-192.svg">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🇮🇳 インド単位変換</h1>
+            <button id="settingsBtn" class="settings-btn" aria-label="設定">⚙️</button>
+        </header>
+
+        <!-- タブ切り替え -->
+        <div class="tabs">
+            <button class="tab-btn active" data-mode="currency">💰 通貨</button>
+            <button class="tab-btn" data-mode="area">📐 面積</button>
+        </div>
+
+        <!-- 通貨モード -->
+        <div id="currencyMode" class="mode-content active">
+            <div class="input-group">
+                <label for="jpy">日本円 (¥)</label>
+                <input type="text" inputmode="decimal" id="jpy" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label for="inr">インドルピー (₹)</label>
+                <input type="text" inputmode="decimal" id="inr" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label for="lakh">ラック</label>
+                <input type="number" id="lakh" placeholder="0">
+                <span class="hint">1 ラック = 100,000 ルピー</span>
+            </div>
+            <div class="input-group">
+                <label for="crore">クロール</label>
+                <input type="number" id="crore" placeholder="0">
+                <span class="hint">1 クロール = 100 ラック</span>
+            </div>
+        </div>
+
+        <!-- 面積モード -->
+        <div id="areaMode" class="mode-content">
+            <div class="input-group">
+                <label for="acre">エーカー</label>
+                <input type="number" id="acre" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label for="sqft">平方フィート (sq ft)</label>
+                <input type="number" id="sqft" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label for="hectare">ヘクタール (ha)</label>
+                <input type="number" id="hectare" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label for="sqm">平方メートル (m²)</label>
+                <input type="number" id="sqm" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label for="tsubo">坪</label>
+                <input type="number" id="tsubo" placeholder="0">
+            </div>
+        </div>
+    </div>
+
+    <!-- 設定モーダル -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>設定</h2>
+                <button id="closeModal" class="close-btn">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="exchangeRate">為替レート (1 JPY = ? INR)</label>
+                    <input type="number" id="exchangeRate" step="0.0001" placeholder="0.6">
+                    <span class="hint">例: 1円 = 0.6ルピー</span>
+                </div>
+                <button id="saveSettings" class="save-btn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
