@@ -134,6 +134,12 @@ h1 {
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
 }
 
+/* 日本円とインドルピーは右寄せ */
+#jpy, #inr {
+    text-align: right;
+    font-weight: 600;
+}
+
 .hint {
     font-size: 12px;
     color: #999;
