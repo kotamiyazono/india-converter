@@ -125,6 +125,7 @@ h1 {
     font-size: 16px;
     transition: all 0.3s;
     background: #fafafa;
+    text-align: right;
 }
 
 .input-group input:focus {
@@ -132,11 +133,6 @@ h1 {
     border-color: #667eea;
     background: white;
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-}
-
-/* 全ての数字フィールドを右寄せ */
-.input-group input {
-    text-align: right;
 }
 
 /* 日本円とインドルピーは太字 */
