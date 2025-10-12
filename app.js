@@ -29,10 +29,18 @@ const saveSettings = document.getElementById('saveSettings');
 const exchangeRateInput = document.getElementById('exchangeRate');
 const historyList = document.getElementById('historyList');
 const clearHistoryBtn = document.getElementById('clearHistory');
+const saveCurrencyBtn = document.getElementById('saveCurrencyBtn');
+const saveAreaBtn = document.getElementById('saveAreaBtn');
 
 // 履歴管理
 let conversionHistory = JSON.parse(localStorage.getItem('conversionHistory')) || [];
 const MAX_HISTORY = 20;
+
+// 現在の変換データを一時保存
+let currentConversion = {
+    currency: null,
+    area: null
+};
 
 // タブ切り替え
 tabBtns.forEach(btn => {
@@ -110,6 +118,28 @@ clearHistoryBtn.addEventListener('click', () => {
         conversionHistory = [];
         localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
         displayHistory();
+    }
+});
+
+// 通貨変換を履歴に保存
+saveCurrencyBtn.addEventListener('click', () => {
+    if (currentConversion.currency) {
+        const data = currentConversion.currency;
+        saveToHistory('currency', data.fromUnit, data.fromValue, data.toUnit, data.toValue);
+        alert('履歴に保存しました！');
+    } else {
+        alert('保存する変換データがありません');
+    }
+});
+
+// 面積変換を履歴に保存
+saveAreaBtn.addEventListener('click', () => {
+    if (currentConversion.area) {
+        const data = currentConversion.area;
+        saveToHistory('area', data.fromUnit, data.fromValue, data.toUnit, data.toValue);
+        alert('履歴に保存しました！');
+    } else {
+        alert('保存する変換データがありません');
     }
 });
 
@@ -308,9 +338,14 @@ function convertCurrency(sourceId, value) {
             break;
     }
     
-    // 履歴に保存（有効な変換の場合のみ）
+    // 現在の変換データを保存（ボタンで保存する用）
     if (toUnit && toValue) {
-        saveToHistory('currency', unitNames[sourceId], formatWithCommas(val, 0), toUnit, toValue);
+        currentConversion.currency = {
+            fromUnit: unitNames[sourceId],
+            fromValue: formatWithCommas(val, sourceId === 'jpy' || sourceId === 'inr' ? 0 : (sourceId === 'lakh' ? 4 : 6)),
+            toUnit: toUnit,
+            toValue: toValue
+        };
     }
 }
 
@@ -475,9 +510,14 @@ function convertArea(sourceId, value) {
         }
     });
     
-    // 履歴に保存
+    // 現在の変換データを保存（ボタンで保存する用）
     if (firstConversion) {
-        saveToHistory('area', unitNames[sourceId], val.toString(), firstConversion.unit, firstConversion.value);
+        currentConversion.area = {
+            fromUnit: unitNames[sourceId],
+            fromValue: val.toString(),
+            toUnit: firstConversion.unit,
+            toValue: firstConversion.value
+        };
     }
 }
 
