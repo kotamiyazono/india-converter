@@ -15,7 +15,11 @@
     <div class="container">
         <header>
             <h1>🇮🇳 インド単位変換</h1>
-            <button id="settingsBtn" class="settings-btn" aria-label="設定">⚙️</button>
+            <div class="header-actions">
+                <button id="resetBtn" class="icon-btn" aria-label="リセット" title="リセット">🔄</button>
+                <button id="historyBtn" class="icon-btn" aria-label="履歴" title="履歴">📋</button>
+                <button id="settingsBtn" class="icon-btn" aria-label="設定" title="設定">⚙️</button>
+            </div>
         </header>
 
         <!-- タブ切り替え -->
@@ -75,8 +79,8 @@
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>設定</h2>
-                <button id="closeModal" class="close-btn">✕</button>
+                <h2>⚙️ 設定</h2>
+                <button class="close-btn" data-modal="settings">✕</button>
             </div>
             <div class="modal-body">
                 <div class="input-group">
@@ -84,7 +88,23 @@
                     <input type="number" id="exchangeRate" step="0.0001" placeholder="0.6">
                     <span class="hint">例: 1円 = 0.6ルピー</span>
                 </div>
-                <button id="saveSettings" class="save-btn">保存</button>
+                <button id="saveSettings" class="primary-btn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 履歴モーダル -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 変換履歴</h2>
+                <button class="close-btn" data-modal="history">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="historyList" class="history-list">
+                    <p class="empty-message">まだ履歴がありません</p>
+                </div>
+                <button id="clearHistory" class="secondary-btn">履歴をクリア</button>
             </div>
         </div>
     </div>

@@ -21,10 +21,18 @@ const currencyMode = document.getElementById('currencyMode');
 const areaMode = document.getElementById('areaMode');
 const tabBtns = document.querySelectorAll('.tab-btn');
 const settingsBtn = document.getElementById('settingsBtn');
+const historyBtn = document.getElementById('historyBtn');
+const resetBtn = document.getElementById('resetBtn');
 const settingsModal = document.getElementById('settingsModal');
-const closeModal = document.getElementById('closeModal');
+const historyModal = document.getElementById('historyModal');
 const saveSettings = document.getElementById('saveSettings');
 const exchangeRateInput = document.getElementById('exchangeRate');
+const historyList = document.getElementById('historyList');
+const clearHistoryBtn = document.getElementById('clearHistory');
+
+// 履歴管理
+let conversionHistory = JSON.parse(localStorage.getItem('conversionHistory')) || [];
+const MAX_HISTORY = 20;
 
 // タブ切り替え
 tabBtns.forEach(btn => {
@@ -46,20 +54,40 @@ tabBtns.forEach(btn => {
     });
 });
 
+// リセット機能
+resetBtn.addEventListener('click', () => {
+    // 全ての入力フィールドをクリア
+    Object.values(currencyInputs).forEach(input => input.value = '');
+    Object.values(areaInputs).forEach(input => input.value = '');
+});
+
 // 設定モーダル
 settingsBtn.addEventListener('click', () => {
     settingsModal.classList.add('active');
     exchangeRateInput.value = exchangeRate;
 });
 
-closeModal.addEventListener('click', () => {
-    settingsModal.classList.remove('active');
+// 履歴モーダル
+historyBtn.addEventListener('click', () => {
+    historyModal.classList.add('active');
+    displayHistory();
 });
 
-settingsModal.addEventListener('click', (e) => {
-    if (e.target === settingsModal) {
+// モーダルを閉じる
+document.querySelectorAll('.close-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
         settingsModal.classList.remove('active');
-    }
+        historyModal.classList.remove('active');
+    });
+});
+
+// モーダル外クリックで閉じる
+[settingsModal, historyModal].forEach(modal => {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
 });
 
 saveSettings.addEventListener('click', () => {
@@ -75,6 +103,111 @@ saveSettings.addEventListener('click', () => {
         }
     }
 });
+
+// 履歴をクリア
+clearHistoryBtn.addEventListener('click', () => {
+    if (confirm('履歴を全て削除しますか？')) {
+        conversionHistory = [];
+        localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
+        displayHistory();
+    }
+});
+
+// ========== 履歴機能 ==========
+
+function saveToHistory(mode, fromUnit, fromValue, toUnit, toValue) {
+    const historyItem = {
+        mode: mode,
+        fromUnit: fromUnit,
+        fromValue: fromValue,
+        toUnit: toUnit,
+        toValue: toValue,
+        timestamp: new Date().toISOString()
+    };
+    
+    conversionHistory.unshift(historyItem);
+    
+    // 最大件数を超えたら古いものを削除
+    if (conversionHistory.length > MAX_HISTORY) {
+        conversionHistory = conversionHistory.slice(0, MAX_HISTORY);
+    }
+    
+    localStorage.setItem('conversionHistory', JSON.stringify(conversionHistory));
+}
+
+function displayHistory() {
+    if (conversionHistory.length === 0) {
+        historyList.innerHTML = '<p class="empty-message">まだ履歴がありません</p>';
+        return;
+    }
+    
+    historyList.innerHTML = conversionHistory.map(item => {
+        const date = new Date(item.timestamp);
+        const timeStr = `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+        const modeEmoji = item.mode === 'currency' ? '💰' : '📐';
+        
+        return `
+            <div class="history-item" data-item='${JSON.stringify(item)}'>
+                <div class="history-item-header">
+                    <span class="history-mode">${modeEmoji} ${item.mode === 'currency' ? '通貨' : '面積'}</span>
+                    <span class="history-time">${timeStr}</span>
+                </div>
+                <div class="history-conversion">
+                    ${item.fromValue} ${item.fromUnit} → ${item.toValue} ${item.toUnit}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // 履歴アイテムをクリックしたら値を復元
+    document.querySelectorAll('.history-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const data = JSON.parse(item.dataset.item);
+            restoreFromHistory(data);
+            historyModal.classList.remove('active');
+        });
+    });
+}
+
+function restoreFromHistory(data) {
+    // 適切なモードに切り替え
+    const targetMode = data.mode === 'currency' ? 'currency' : 'area';
+    tabBtns.forEach(btn => {
+        if (btn.dataset.mode === targetMode) {
+            btn.click();
+        }
+    });
+    
+    // 値を復元
+    if (data.mode === 'currency') {
+        const unitMap = {
+            '日本円': 'jpy',
+            'インドルピー': 'inr',
+            'ラック': 'lakh',
+            'クロール': 'crore'
+        };
+        const inputId = unitMap[data.fromUnit];
+        if (inputId && currencyInputs[inputId]) {
+            // カンマを削除した数値を設定
+            const numValue = data.fromValue.replace(/,/g, '');
+            currencyInputs[inputId].value = numValue;
+            currencyInputs[inputId].dispatchEvent(new Event('input'));
+        }
+    } else {
+        const unitMap = {
+            'エーカー': 'acre',
+            '平方フィート': 'sqft',
+            'ヘクタール': 'hectare',
+            '平方メートル': 'sqm',
+            '坪': 'tsubo'
+        };
+        const inputId = unitMap[data.fromUnit];
+        if (inputId && areaInputs[inputId]) {
+            areaInputs[inputId].value = data.fromValue;
+            areaInputs[inputId].dispatchEvent(new Event('input'));
+        }
+    }
+}
 
 // ========== 通貨変換 ==========
 
@@ -118,6 +251,15 @@ function convertCurrency(sourceId, value) {
 
     const val = parseFloat(cleanValue);
     
+    const unitNames = {
+        jpy: '日本円',
+        inr: 'インドルピー',
+        lakh: 'ラック',
+        crore: 'クロール'
+    };
+    
+    let toUnit, toValue;
+    
     switch(sourceId) {
         case 'jpy':
             // 円からルピーへ
@@ -125,13 +267,18 @@ function convertCurrency(sourceId, value) {
             currencyInputs.inr.value = formatWithCommas(inr, 2);
             currencyInputs.lakh.value = (inr / 100000).toFixed(4);
             currencyInputs.crore.value = (inr / 10000000).toFixed(6);
+            toUnit = 'インドルピー';
+            toValue = formatWithCommas(inr, 2);
             break;
             
         case 'inr':
             // ルピーから他の単位へ
-            currencyInputs.jpy.value = formatWithCommas(val / exchangeRate, 2);
+            const jpy = val / exchangeRate;
+            currencyInputs.jpy.value = formatWithCommas(jpy, 2);
             currencyInputs.lakh.value = (val / 100000).toFixed(4);
             currencyInputs.crore.value = (val / 10000000).toFixed(6);
+            toUnit = '日本円';
+            toValue = formatWithCommas(jpy, 2);
             break;
             
         case 'lakh':
@@ -140,6 +287,8 @@ function convertCurrency(sourceId, value) {
             currencyInputs.inr.value = formatWithCommas(inrFromLakh, 2);
             currencyInputs.jpy.value = formatWithCommas(inrFromLakh / exchangeRate, 2);
             currencyInputs.crore.value = (val / 100).toFixed(6);
+            toUnit = 'インドルピー';
+            toValue = formatWithCommas(inrFromLakh, 2);
             break;
             
         case 'crore':
@@ -148,7 +297,14 @@ function convertCurrency(sourceId, value) {
             currencyInputs.inr.value = formatWithCommas(inrFromCrore, 2);
             currencyInputs.jpy.value = formatWithCommas(inrFromCrore / exchangeRate, 2);
             currencyInputs.lakh.value = (val * 100).toFixed(4);
+            toUnit = 'インドルピー';
+            toValue = formatWithCommas(inrFromCrore, 2);
             break;
+    }
+    
+    // 履歴に保存（有効な変換の場合のみ）
+    if (toUnit && toValue) {
+        saveToHistory('currency', unitNames[sourceId], formatWithCommas(val, 2), toUnit, toValue);
     }
 }
 
@@ -230,26 +386,52 @@ function convertArea(sourceId, value) {
 
     const val = parseFloat(value);
     
+    const unitNames = {
+        acre: 'エーカー',
+        sqft: '平方フィート',
+        hectare: 'ヘクタール',
+        sqm: '平方メートル',
+        tsubo: '坪'
+    };
+    
     // まず入力値を平方メートルに変換
     const sqmValue = val / areaConversions[sourceId];
+    
+    let firstConversion = null;
     
     // 平方メートルから他の単位へ変換
     Object.entries(areaInputs).forEach(([id, input]) => {
         if (id !== sourceId) {
             const converted = sqmValue * areaConversions[id];
             
+            let displayValue;
             // 適切な桁数で表示
             if (converted < 0.0001) {
-                input.value = converted.toExponential(4);
+                displayValue = converted.toExponential(4);
             } else if (converted < 1) {
-                input.value = converted.toFixed(6);
+                displayValue = converted.toFixed(6);
             } else if (converted < 100) {
-                input.value = converted.toFixed(4);
+                displayValue = converted.toFixed(4);
             } else {
-                input.value = converted.toFixed(2);
+                displayValue = converted.toFixed(2);
+            }
+            
+            input.value = displayValue;
+            
+            // 最初の変換結果を履歴用に保存
+            if (!firstConversion) {
+                firstConversion = {
+                    unit: unitNames[id],
+                    value: displayValue
+                };
             }
         }
     });
+    
+    // 履歴に保存
+    if (firstConversion) {
+        saveToHistory('area', unitNames[sourceId], val.toString(), firstConversion.unit, firstConversion.value);
+    }
 }
 
 // 面積入力イベント
