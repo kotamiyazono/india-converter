@@ -1,7 +1,7 @@
 {
-  "name": "インド単位変換アプリ",
-  "short_name": "インド変換",
-  "description": "インドの通貨と面積の単位変換アプリ",
+  "name": "India Unit Converter",
+  "short_name": "India Conv",
+  "description": "Currency and Area Unit Converter for India",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

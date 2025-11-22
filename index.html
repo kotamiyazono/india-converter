@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#4CAF50">
-    <meta name="description" content="インド単位変換アプリ - 通貨と面積の変換">
-    <title>インド単位変換</title>
+    <meta name="description" content="India Unit Converter - Currency and Area Conversion">
+    <title>India Unit Converter</title>
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/svg+xml" href="icon-192.svg">
@@ -14,99 +14,116 @@
 <body>
     <div class="container">
         <header>
-            <h1>🇮🇳 インド単位変換</h1>
+            <h1>🇮🇳 India Unit Converter</h1>
             <div class="header-actions">
-                <button id="resetBtn" class="icon-btn" aria-label="リセット" title="リセット">🔄</button>
-                <button id="historyBtn" class="icon-btn" aria-label="履歴" title="履歴">📋</button>
-                <button id="settingsBtn" class="icon-btn" aria-label="設定" title="設定">⚙️</button>
+                <button id="resetBtn" class="icon-btn" aria-label="Reset" title="Reset">🔄</button>
+                <button id="historyBtn" class="icon-btn" aria-label="History" title="History">📋</button>
+                <button id="settingsBtn" class="icon-btn" aria-label="Settings" title="Settings">⚙️</button>
             </div>
         </header>
 
-        <!-- タブ切り替え -->
+        <!-- Tab Navigation -->
         <div class="tabs">
-            <button class="tab-btn active" data-mode="currency">💰 通貨</button>
-            <button class="tab-btn" data-mode="area">📐 面積</button>
+            <button class="tab-btn active" data-mode="currency">💰 Currency</button>
+            <button class="tab-btn" data-mode="area">📐 Area</button>
         </div>
 
-        <!-- 通貨モード -->
+        <!-- Currency Mode -->
         <div id="currencyMode" class="mode-content active">
             <div class="input-group">
-                <label for="jpy">日本円 (¥)</label>
+                <label for="jpy">Japanese Yen (¥)</label>
                 <input type="text" inputmode="decimal" id="jpy" placeholder="0">
             </div>
             <div class="input-group">
-                <label for="inr">インドルピー (₹)</label>
+                <label for="inr">Indian Rupee (₹)</label>
                 <input type="text" inputmode="decimal" id="inr" placeholder="0">
             </div>
             <div class="input-group">
-                <label for="lakh">ラック</label>
+                <label for="lakh">Lakh</label>
                 <input type="text" inputmode="decimal" id="lakh" placeholder="0">
-                <span class="hint">1 ラック = 100,000 ルピー</span>
+                <span class="hint">1 Lakh = 100,000 Rupees</span>
             </div>
             <div class="input-group">
-                <label for="crore">クロール</label>
+                <label for="crore">Crore</label>
                 <input type="text" inputmode="decimal" id="crore" placeholder="0">
-                <span class="hint">1 クロール = 100 ラック</span>
+                <span class="hint">1 Crore = 100 Lakh</span>
             </div>
-            <button id="saveCurrencyBtn" class="save-btn">💾 履歴に保存</button>
+            <button id="saveCurrencyBtn" class="save-btn">💾 Save to History</button>
         </div>
 
-        <!-- 面積モード -->
+        <!-- Area Mode -->
         <div id="areaMode" class="mode-content">
             <div class="input-group">
-                <label for="acre">エーカー</label>
+                <label for="acre">Acre</label>
                 <input type="text" inputmode="decimal" id="acre" placeholder="0">
             </div>
             <div class="input-group">
-                <label for="sqft">平方フィート (sq ft)</label>
+                <label for="sqft">Square Feet (sq ft)</label>
                 <input type="text" inputmode="decimal" id="sqft" placeholder="0">
             </div>
             <div class="input-group">
-                <label for="hectare">ヘクタール (ha)</label>
+                <label for="hectare">Hectare (ha)</label>
                 <input type="text" inputmode="decimal" id="hectare" placeholder="0">
             </div>
             <div class="input-group">
-                <label for="sqm">平方メートル (m²)</label>
+                <label for="sqm">Square Meter (m²)</label>
                 <input type="text" inputmode="decimal" id="sqm" placeholder="0">
             </div>
             <div class="input-group">
-                <label for="tsubo">坪</label>
+                <label for="tsubo">Tsubo</label>
                 <input type="text" inputmode="decimal" id="tsubo" placeholder="0">
             </div>
-            <button id="saveAreaBtn" class="save-btn">💾 履歴に保存</button>
+            <button id="saveAreaBtn" class="save-btn">💾 Save to History</button>
         </div>
     </div>
 
-    <!-- 設定モーダル -->
+    <!-- Settings Modal -->
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>⚙️ 設定</h2>
+                <h2>⚙️ Settings</h2>
                 <button class="close-btn" data-modal="settings">✕</button>
             </div>
             <div class="modal-body">
                 <div class="input-group">
-                    <label for="exchangeRate">為替レート (1 JPY = ? INR)</label>
+                    <label for="exchangeRate">Exchange Rate (1 JPY = ? INR)</label>
                     <input type="number" id="exchangeRate" step="0.0001" placeholder="0.6">
-                    <span class="hint">例: 1円 = 0.6ルピー</span>
+                    <span class="hint">Example: 1 Yen = 0.6 Rupee</span>
                 </div>
-                <button id="saveSettings" class="primary-btn">保存</button>
+                <button id="saveSettings" class="primary-btn">Save</button>
             </div>
         </div>
     </div>
 
-    <!-- 履歴モーダル -->
+    <!-- History Modal -->
     <div id="historyModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📋 変換履歴</h2>
+                <h2>📋 Conversion History</h2>
                 <button class="close-btn" data-modal="history">✕</button>
             </div>
             <div class="modal-body">
                 <div id="historyList" class="history-list">
-                    <p class="empty-message">まだ履歴がありません</p>
+                    <p class="empty-message">No history yet</p>
                 </div>
-                <button id="clearHistory" class="secondary-btn">履歴をクリア</button>
+                <button id="clearHistory" class="secondary-btn">Clear History</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save with Note Modal -->
+    <div id="saveNoteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💾 Save to History</h2>
+                <button class="close-btn" data-modal="saveNote">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="noteInput">Note (Optional)</label>
+                    <textarea id="noteInput" placeholder="Add a note for this conversion..." rows="3"></textarea>
+                </div>
+                <button id="confirmSaveBtn" class="primary-btn">Save</button>
             </div>
         </div>
     </div>
