@@ -384,7 +384,7 @@ function convertCurrency(sourceId, value) {
     if (toUnit && toValue) {
         currentConversion.currency = {
             fromUnit: unitNames[sourceId],
-            fromValue: formatWithCommas(val, sourceId === 'jpy' || sourceId === 'inr' ? 0 : (sourceId === 'lakh' ? 4 : 6)),
+            fromValue: formatWithCommas(val, sourceId === 'jpy' || sourceId === 'inr' ? 0 : 2),
             toUnit: toUnit,
             toValue: toValue
         };
@@ -482,11 +482,10 @@ Object.entries(currencyInputs).forEach(([id, input]) => {
         });
         
         input.addEventListener('blur', (e) => {
-            // フォーカスが外れたときに桁区切りを追加（小数点あり）
+            // フォーカスが外れたときに桁区切りを追加（小数点2桁）
             const value = e.target.value.replace(/,/g, '');
             if (value && !isNaN(value) && value !== '') {
-                const decimals = id === 'lakh' ? 4 : 6;
-                e.target.value = formatWithCommas(value, decimals);
+                e.target.value = formatWithCommas(value, 2);
             }
         });
     }
