@@ -4,26 +4,23 @@
     box-sizing: border-box;
 }
 
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #fff;
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
     color: #333;
 }
 
 .container {
     background: white;
-    border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    width: 100%;
-    max-width: 380px;
-    padding: 16px;
-    max-height: 100vh;
-    overflow: hidden;
+    width: 100vw;
+    min-height: 100vh;
+    max-width: 100vw;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 12px;
+    margin: 0;
     display: flex;
     flex-direction: column;
 }
@@ -108,24 +105,31 @@ h1 {
 
 .input-group {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
 }
 
 .input-group label {
     font-size: 13px;
     font-weight: 600;
     color: #555;
+    min-width: 110px;
+    flex-shrink: 0;
+    text-align: left;
 }
 
 .input-group input {
-    padding: 10px 12px;
+    padding: 8px 8px;
     border: 2px solid #e0e0e0;
-    border-radius: 10px;
+    border-radius: 8px;
     font-size: 16px;
     transition: all 0.3s;
     background: #fafafa;
     text-align: right;
+    flex: 1;
+    min-width: 0;
 }
 
 .input-group input:focus {
@@ -137,12 +141,13 @@ h1 {
 
 /* 日本円とインドルピーは太字 */
 #jpy, #inr {
-    font-weight: 600;
+    font-weight: 400;
 }
 
 .hint {
-    font-size: 11px;
+    font-size: 10px;
     color: #999;
+    margin-left: 4px;
 }
 
 /* textarea for notes */

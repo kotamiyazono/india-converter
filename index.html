@@ -31,22 +31,32 @@
         <!-- Currency Mode -->
         <div id="currencyMode" class="mode-content active">
             <div class="input-group">
-                <label for="jpy">Japanese Yen (¥)</label>
+                <label for="usd">USD</label>
+                <input type="text" inputmode="decimal" id="usd" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label for="jpy">JPY</label>
                 <input type="text" inputmode="decimal" id="jpy" placeholder="0">
             </div>
             <div class="input-group">
-                <label for="inr">Indian Rupee (₹)</label>
+                <label for="idr">IDR</label>
+                <input type="text" inputmode="decimal" id="idr" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label for="vnd">VND</label>
+                <input type="text" inputmode="decimal" id="vnd" placeholder="0">
+            </div>
+            <div class="input-group">
+                <label for="inr">INR</label>
                 <input type="text" inputmode="decimal" id="inr" placeholder="0">
             </div>
             <div class="input-group">
                 <label for="lakh">Lakh</label>
                 <input type="text" inputmode="decimal" id="lakh" placeholder="0">
-                <span class="hint">1 Lakh = 100,000 Rupees</span>
             </div>
             <div class="input-group">
                 <label for="crore">Crore</label>
                 <input type="text" inputmode="decimal" id="crore" placeholder="0">
-                <span class="hint">1 Crore = 100 Lakh</span>
             </div>
             <button id="saveCurrencyBtn" class="save-btn">💾 Save to History</button>
         </div>
@@ -58,15 +68,15 @@
                 <input type="text" inputmode="decimal" id="acre" placeholder="0">
             </div>
             <div class="input-group">
-                <label for="sqft">Square Feet (sq ft)</label>
+                <label for="sqft">SQF</label>
                 <input type="text" inputmode="decimal" id="sqft" placeholder="0">
             </div>
             <div class="input-group">
-                <label for="hectare">Hectare (ha)</label>
+                <label for="hectare">ha</label>
                 <input type="text" inputmode="decimal" id="hectare" placeholder="0">
             </div>
             <div class="input-group">
-                <label for="sqm">Square Meter (m²)</label>
+                <label for="sqm">m²</label>
                 <input type="text" inputmode="decimal" id="sqm" placeholder="0">
             </div>
             <div class="input-group">
@@ -86,9 +96,20 @@
             </div>
             <div class="modal-body">
                 <div class="input-group">
-                    <label for="exchangeRate">Exchange Rate (1 JPY = ? INR)</label>
+                    <label for="exchangeRate">1 JPY = ? INR</label>
                     <input type="number" id="exchangeRate" step="0.0001" placeholder="0.6">
-                    <span class="hint">Example: 1 Yen = 0.6 Rupee</span>
+                </div>
+                <div class="input-group">
+                    <label for="usdRate">1 JPY = ? USD</label>
+                    <input type="number" id="usdRate" step="0.0001" placeholder="0.0072">
+                </div>
+                <div class="input-group">
+                    <label for="vndRate">1 JPY = ? VND</label>
+                    <input type="number" id="vndRate" step="1" placeholder="210">
+                </div>
+                <div class="input-group">
+                    <label for="idrRate">1 JPY = ? IDR</label>
+                    <input type="number" id="idrRate" step="1" placeholder="123">
                 </div>
                 <button id="saveSettings" class="primary-btn">Save</button>
             </div>
